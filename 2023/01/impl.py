@@ -1,6 +1,6 @@
 import re
 import textwrap
-from typing import Generator
+from typing import Generator, Literal
 
 DAY_ONE_INPUT = textwrap.dedent('''\
     1abc2
@@ -48,14 +48,29 @@ def line_generator(str) -> Generator[str, None, None]:
     return (line for line in str.splitlines())
 
 
-def first_and_last_digit(line: str):
-    if DAY == 'ONE':
+def get_next_digit(string: str):
+    sub_string = string
+    pattern = re.compile(
+        r'(?P<digit>\d|one|two|three|four|five|six|seven|eight|nine)')
+    result = pattern.search(sub_string)
+    if result:
+        next_digit: str = result.group('digit')
+        next_int = named_number_to_int(next_digit)
+        sub_string = sub_string[result.start() + 1]
+        yield next_int, sub_string
+
+    raise StopIteration()
+
+
+
+def first_and_last_digit(line: str, mode: Literal['INT', 'NAME']):
+    if mode == 'INT':
         pattern = re.compile(r'\d')
+        digits = pattern.findall(line)
+        return digits[0], digits[-1]
     else:
-        pattern = re.compile(
-            r'(\d|one|two|three|four|five|six|seven|eight|nine)')
-    digits = pattern.findall(line)
-    return int(digits[0]), int(digits[-1])
+        digits = 
+    
 
 
 def concat(a, b):
