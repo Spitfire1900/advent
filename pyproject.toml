@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=58.5.0"]
+
+[project]
+name = "advent-of-code"
+description = "Advent of Code - Python"
+version = "0.0"
+authors = [{ name = "Kyle Gottfried", email = "kyle.gottfried@outlook.com" }]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["y*"]
