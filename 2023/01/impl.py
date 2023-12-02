@@ -1,3 +1,5 @@
+import os
+import pathlib
 import re
 import textwrap
 from typing import Generator, Literal
@@ -23,10 +25,13 @@ DAY_TWO_INPUT = textwrap.dedent('''\
     ''')
 DAY_TWO_SUM = 397
 
-DAY = 'ONE'
+DAY = 'TWO'
 
-INPUT = DAY_ONE_INPUT if DAY == 'ONE' else DAY_TWO_INPUT
-SUM = DAY_ONE_SUM if DAY == 'ONE' else DAY_TWO_SUM
+# INPUT = DAY_ONE_INPUT if DAY == 'ONE' else DAY_TWO_INPUT
+# SUM = DAY_ONE_SUM if DAY == 'ONE' else DAY_TWO_SUM
+
+INPUT = (pathlib.Path(os.path.realpath(__file__)).parent /
+         'input.txt').read_text()
 
 
 def named_number_to_int(str):
@@ -48,29 +53,28 @@ def line_generator(str) -> Generator[str, None, None]:
     return (line for line in str.splitlines())
 
 
-def get_next_digit(string: str):
+def next_digit_generator(string: str):
     sub_string = string
-    pattern = re.compile(
-        r'(?P<digit>\d|one|two|three|four|five|six|seven|eight|nine)')
-    result = pattern.search(sub_string)
-    if result:
-        next_digit: str = result.group('digit')
-        next_int = named_number_to_int(next_digit)
-        sub_string = sub_string[result.start() + 1]
-        yield next_int, sub_string
-
-    raise StopIteration()
-
+    while sub_string:
+        pattern = re.compile(
+            r'(?P<digit>\d|one|two|three|four|five|six|seven|eight|nine)')
+        result = pattern.search(sub_string)
+        if result:
+            next_digit: str = result.group('digit')
+            next_int = named_number_to_int(next_digit)
+            sub_string = sub_string[result.start() + 1:]
+            yield next_int
+        else:
+            return
 
 
 def first_and_last_digit(line: str, mode: Literal['INT', 'NAME']):
     if mode == 'INT':
         pattern = re.compile(r'\d')
-        digits = pattern.findall(line)
-        return digits[0], digits[-1]
+        digits: list[int] = pattern.findall(line)
     else:
-        digits = 
-    
+        digits = list(next_digit_generator(line))
+    return digits[0], digits[-1]
 
 
 def concat(a, b):
@@ -83,11 +87,12 @@ def add(a, b):
 
 def main():
     lines = line_generator(INPUT)
-    digits = (first_and_last_digit(line) for line in lines)
+    mode = 'INT' if DAY == 'ONE' else 'NAME'
+    digits = (first_and_last_digit(line, mode) for line in lines)
     concats = (concat(*digits) for digits in digits)
 
     sum = 0
     for var in concats:
         sum = add(sum, int(var))
     print(sum)
-    assert sum == SUM
+    # assert sum == SUM
