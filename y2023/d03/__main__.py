@@ -1,3 +1,5 @@
+import os
+import pathlib
 import re
 import sys
 import textwrap
@@ -17,6 +19,8 @@ TEST_INPUT_DATA = textwrap.dedent('''\
     .664.598..
     ''')
 TEST_INPUT_SUM = 4361
+INPUT_DATA = (pathlib.Path(os.path.realpath(__file__)).parent /
+              'input.txt').read_text()
 
 
 @dataclass
@@ -46,7 +50,7 @@ class Part():
                 return True
         # next row
         for col in range(self.col_start - 1, self.col_end + 2):
-            if (self.row - +1, col) in symbol_locations:
+            if (self.row + 1, col) in symbol_locations:
                 return True
         return False
 
@@ -54,7 +58,8 @@ class Part():
 def symbol_locations(input_str: str) -> Generator[Tuple[int, int], Any, None]:
     for row_idex, row in enumerate(input_str.splitlines()):
         for col_index, char in enumerate(row):
-            if char in ['*', '#', '$']:
+            if not char.isdigit() and char != '.':
+                # if char in ['!', '*', '#', '$', '+']:
                 yield row_idex, col_index
 
 
@@ -82,16 +87,23 @@ def matched_parts(
 
 def main():
     # print(list(symbol_locations(TEST_INPUT_DATA)))
-    symbols = list(symbol_locations(TEST_INPUT_DATA))
-    print('symbols:')
-    print(symbols)
-    parts_to_check = probable_parts(TEST_INPUT_DATA)
-    parts = matched_parts(parts_to_check, symbols)
+    test_input_symbols = list(symbol_locations(TEST_INPUT_DATA))
+    print('test input symbols:')
+    print(test_input_symbols)
+    test_input_parts_to_check = probable_parts(TEST_INPUT_DATA)
+    test_input_parts = list(
+        matched_parts(test_input_parts_to_check, test_input_symbols))
 
-    print('parts:')
-    print([part.number for part in parts])
+    print('test input parts:')
+    print([part.number for part in test_input_parts])
+    print(
+        f'TEST_INPUT_ANSWER: {sum([part.number for part in test_input_parts])}'
+    )
 
-    # print(list(probable_parts(TEST_INPUT_DATA)))
+    symbols = list(symbol_locations(INPUT_DATA))
+    parts_to_check = probable_parts(INPUT_DATA)
+    parts = list(matched_parts(parts_to_check, symbols))
+    print(f'ANSWER: {sum([part.number for part in parts])}')
 
 
 if __name__ == "__main__":
