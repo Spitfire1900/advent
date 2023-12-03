@@ -1,6 +1,6 @@
 import textwrap
 from enum import Enum
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, TypedDict
 
 DAY_ONE_TEST_INPUT = textwrap.dedent('''\
     Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -33,9 +33,20 @@ def parse_draw(string: str):
     return draws
 
 
+class Game(TypedDict, total=False):
+    string: str
+    draws_string: List[str]
+    draws: List[List[Tuple[Stone, int]]]
+
+
+class Games(TypedDict):
+    game_numer: int
+    game: Game
+
+
 def parse_games(string: str):
     lines = string.splitlines()
-    games: Dict[int, Dict[str, str | List[str]]] = {
+    games: Dict[int, Game] = {
         idx + 1: {
             'string': val[val.find(':') + 2:]
         }
