@@ -10,3 +10,6 @@ authors = [{ name = "Kyle Gottfried", email = "kyle.gottfried@outlook.com" }]
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["y*"]
+
+[tool.pytest.ini_options]
+ python_files = ["test_*.py", "*_test.py", "test.py", "tests.py"]
