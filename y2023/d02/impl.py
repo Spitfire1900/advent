@@ -138,7 +138,7 @@ def main():
 
     # DRAWS = [game['draws'] for game in PARSED_TEST_GAMES.values()]
     PART_TWO_TEST_RESULTS = [
-        fewest_possible_stones(game['draws'])
+        fewest_possible_stones(game['draws'])  # type: ignore
         for game in PARSED_TEST_GAMES.values()
     ]
     for idx, result in enumerate(PART_TWO_TEST_RESULTS):
@@ -147,7 +147,9 @@ def main():
         )
     PARSED_GAMES = parse_games(INPUT)
     PART_TWO_RESULTS = [
-        fewest_possible_stones(game['draws'])
+        fewest_possible_stones(game['draws'])  # type: ignore
         for game in PARSED_GAMES.values()
     ]
-    print(f'PART TWO: {sum(result["power"] for result in PART_TWO_RESULTS)}')
+    print(
+        f'PART TWO: {sum(result["power"] for result in PART_TWO_RESULTS)}'  # type: ignore
+    )
