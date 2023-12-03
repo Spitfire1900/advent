@@ -1,6 +1,6 @@
 import textwrap
 
-from impl import which_games
+from impl import MaxStones, which_games
 
 
 def test_which_games():
@@ -11,4 +11,5 @@ def test_which_games():
         Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
         Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
     ''')
-    assert which_games(example_input) == [1, 2, 5]
+    PART_ONE_MAX_STONES: MaxStones = {'RED': 12, 'GREEN': 13, 'BLUE': 14}
+    assert which_games(example_input, **PART_ONE_MAX_STONES) == [1, 2, 5]
