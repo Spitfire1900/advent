@@ -4,7 +4,7 @@ import textwrap
 from enum import Enum
 from typing import Dict, List, Tuple, TypedDict, Unpack
 
-PART_ONE_TEST_INPUT = textwrap.dedent('''\
+TEST_INPUT = textwrap.dedent('''\
     Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
     Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
     Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -79,6 +79,36 @@ def game_is_possible(draws: List[List[Tuple[Stone, int]]],
     return True
 
 
+def fewest_possible(draws: List[List[Tuple[Stone, int]]], stone: Stone):
+    min_possible = 0
+    for draw in draws:
+        for combination in draw:
+            if combination[0] == stone:
+                min_possible = max(min_possible, combination[1])
+    return min_possible
+
+
+class FewestPossible(TypedDict):
+    red: int
+    blue: int
+    green: int
+    power: int
+
+
+def fewest_possible_stones(
+        draws: List[List[Tuple[Stone, int]]]) -> FewestPossible:
+    fewest_red = fewest_possible(draws, Stone.RED)
+    fewest_blue = fewest_possible(draws, Stone.BLUE)
+    fewest_green = fewest_possible(draws, Stone.GREEN)
+
+    return {
+        'red': fewest_red,
+        'blue': fewest_blue,
+        'green': fewest_green,
+        'power': fewest_red * fewest_blue * fewest_green
+    }
+
+
 def which_games(games: str, **max_stones: Unpack[MaxStones]):
     games_dict = parse_games(games)
 
@@ -100,6 +130,24 @@ def which_games(games: str, **max_stones: Unpack[MaxStones]):
 def main():
     PART_ONE_MAX_STONES: MaxStones = {'RED': 12, 'GREEN': 13, 'BLUE': 14}
     print(
-        f'PART ONE EXAMPLE: {sum(which_games(PART_ONE_TEST_INPUT, **PART_ONE_MAX_STONES))}'
+        f'PART ONE EXAMPLE: {sum(which_games(TEST_INPUT, **PART_ONE_MAX_STONES))}'
     )
     print(f'PART ONE: {sum(which_games(INPUT, **PART_ONE_MAX_STONES))}')
+    PARSED_TEST_GAMES = parse_games(TEST_INPUT)
+    # print(fewest_possible_stones(PARSED_TEST_GAMES[1]['draws']))
+
+    # DRAWS = [game['draws'] for game in PARSED_TEST_GAMES.values()]
+    PART_TWO_TEST_RESULTS = [
+        fewest_possible_stones(game['draws'])
+        for game in PARSED_TEST_GAMES.values()
+    ]
+    for idx, result in enumerate(PART_TWO_TEST_RESULTS):
+        print(
+            f'PART TWO GAME {idx + 1} EXAMPLE: Red: {result["red"]}, Blue: {result["blue"]}, Green: {result["green"]}, Power: {result["power"]}'
+        )
+    PARSED_GAMES = parse_games(INPUT)
+    PART_TWO_RESULTS = [
+        fewest_possible_stones(game['draws'])
+        for game in PARSED_GAMES.values()
+    ]
+    print(f'PART TWO: {sum(result["power"] for result in PART_TWO_RESULTS)}')
