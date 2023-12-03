@@ -1,14 +1,18 @@
+import os
+import pathlib
 import textwrap
 from enum import Enum
 from typing import Dict, List, Tuple, TypedDict, Unpack
 
-DAY_ONE_TEST_INPUT = textwrap.dedent('''\
+PART_ONE_TEST_INPUT = textwrap.dedent('''\
     Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
     Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
     Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
     Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
     Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
     ''')
+INPUT = (pathlib.Path(os.path.realpath(__file__)).parent /
+         'input.txt').read_text()
 
 
 def sum(a: List[int]):
@@ -94,5 +98,8 @@ def which_games(games: str, **max_stones: Unpack[MaxStones]):
 
 
 def main():
-    DAY_ONE_MAX_STONES: MaxStones = {'RED': 12, 'GREEN': 13, 'BLUE': 14}
-    print(sum(which_games(DAY_ONE_TEST_INPUT, **DAY_ONE_MAX_STONES)))
+    PART_ONE_MAX_STONES: MaxStones = {'RED': 12, 'GREEN': 13, 'BLUE': 14}
+    print(
+        f'PART ONE EXAMPLE: {sum(which_games(PART_ONE_TEST_INPUT, **PART_ONE_MAX_STONES))}'
+    )
+    print(f'PART ONE: {sum(which_games(INPUT, **PART_ONE_MAX_STONES))}')
