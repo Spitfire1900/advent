@@ -1,6 +1,6 @@
 import textwrap
 from enum import Enum
-from typing import Dict, List, Tuple, TypedDict
+from typing import Dict, List, Tuple, TypedDict, Unpack
 
 DAY_ONE_TEST_INPUT = textwrap.dedent('''\
     Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -60,10 +60,39 @@ def parse_games(string: str):
     return (games)
 
 
-def which_games(games: str):
-    parse_games(games)
-    return [1, 2, 5]
+class MaxStones(TypedDict):
+    RED: int
+    GREEN: int
+    BLUE: int
+
+
+def game_is_possible(draws: List[List[Tuple[Stone, int]]],
+                     max_stones: MaxStones):
+    for draw in draws:
+        for stone, number in draw:
+            if number > max_stones[stone.name]:
+                return False
+    return True
+
+
+def which_games(games: str, **max_stones: Unpack[MaxStones]):
+    games_dict = parse_games(games)
+
+    possible_games: List[int] = []
+
+    for game_number, game in games_dict.items():
+        draws = game.get('draws', None)
+
+        if draws is None:
+            pass
+        else:
+            game_possible = game_is_possible(draws, max_stones)
+            if game_possible:
+                possible_games.append(game_number)
+
+    return possible_games
 
 
 def main():
-    print(sum(which_games('aaa')))
+    DAY_ONE_MAX_STONES: MaxStones = {'RED': 12, 'GREEN': 13, 'BLUE': 14}
+    print(sum(which_games(DAY_ONE_TEST_INPUT, **DAY_ONE_MAX_STONES)))
