@@ -23,7 +23,7 @@ INPUT_DATA = (pathlib.Path(os.path.realpath(__file__)).parent /
               'input.txt').read_text()
 
 
-@dataclass
+@dataclass(frozen=True)
 class Part():
     number: int
     row: int
@@ -31,13 +31,6 @@ class Part():
     col_end: int
 
     # is_adjacent_to_symbol: None|bool
-
-    def __init__(self, number: int, row: int, col_start: int, col_end: int):
-        self.number = number
-        self.row = row
-        self.col_start = col_start
-        self.col_end = col_end
-
     def has_adjacent_symbols(self, symbol_locations: List[Tuple[int,
                                                                 int]]) -> bool:
         # prior row
@@ -85,6 +78,35 @@ def matched_parts(
             yield part
 
 
+def asterisk_locations(
+        input_str: str) -> Generator[Tuple[int, int], Any, None]:
+    for row_idex, row in enumerate(input_str.splitlines()):
+        for col_index, char in enumerate(row):
+            if char == '*':
+                yield row_idex, col_index
+
+
+def adjacent_parts(coordinate: Tuple[int, int], parts: List[Part]):
+    # previous row
+    for col in range(coordinate[1] - 1, coordinate[1] + 2):
+        for part in parts:
+            if part.row == coordinate[0] - 1:
+                if col in range(part.col_start, part.col_end + 1):
+                    yield part
+    # # same row
+    for col in [coordinate[1] - 1, coordinate[1] + 1]:
+        for part in parts:
+            if part.row == coordinate[0]:
+                if col in range(part.col_start, part.col_end + 1):
+                    yield part
+    # # next row
+    for col in range(coordinate[1] - 1, coordinate[1] + 2):
+        for part in parts:
+            if part.row == coordinate[0] + 1:
+                if col in range(part.col_start, part.col_end + 1):
+                    yield part
+
+
 def main():
     # print(list(symbol_locations(TEST_INPUT_DATA)))
     test_input_symbols = list(symbol_locations(TEST_INPUT_DATA))
@@ -97,13 +119,18 @@ def main():
     print('test input parts:')
     print([part.number for part in test_input_parts])
     print(
-        f'TEST_INPUT_ANSWER: {sum([part.number for part in test_input_parts])}'
+        f'TEST_INPUT_PART_1_ANSWER: {sum([part.number for part in test_input_parts])}'
     )
 
     symbols = list(symbol_locations(INPUT_DATA))
     parts_to_check = probable_parts(INPUT_DATA)
     parts = list(matched_parts(parts_to_check, symbols))
     print(f'ANSWER: {sum([part.number for part in parts])}')
+
+    test_input_asterisks = list(asterisk_locations(TEST_INPUT_DATA))
+    print('test input asterisks:')
+    print(test_input_asterisks)
+    print(set(adjacent_parts(test_input_asterisks[0], test_input_parts)))
 
 
 if __name__ == "__main__":
