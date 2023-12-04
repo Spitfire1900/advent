@@ -4,7 +4,7 @@ import re
 import sys
 import textwrap
 from dataclasses import dataclass
-from typing import Any, Generator, Iterable, List, Tuple
+from typing import Any, Generator, Iterable, List, Set, Tuple
 
 TEST_INPUT_DATA = textwrap.dedent('''\
     467..114..
@@ -86,25 +86,31 @@ def asterisk_locations(
                 yield row_idex, col_index
 
 
-def adjacent_parts(coordinate: Tuple[int, int], parts: List[Part]):
-    # previous row
-    for col in range(coordinate[1] - 1, coordinate[1] + 2):
-        for part in parts:
-            if part.row == coordinate[0] - 1:
-                if col in range(part.col_start, part.col_end + 1):
-                    yield part
-    # # same row
-    for col in [coordinate[1] - 1, coordinate[1] + 1]:
-        for part in parts:
-            if part.row == coordinate[0]:
-                if col in range(part.col_start, part.col_end + 1):
-                    yield part
-    # # next row
-    for col in range(coordinate[1] - 1, coordinate[1] + 2):
-        for part in parts:
-            if part.row == coordinate[0] + 1:
-                if col in range(part.col_start, part.col_end + 1):
-                    yield part
+def adjacent_parts(coordinate: Tuple[int, int],
+                   parts: List[Part]) -> Set[Part]:
+
+    def is_adjacent(coordinate: Tuple[int, int] = coordinate,
+                    parts: List[Part] = parts) -> Generator[Part, Any, None]:
+        # previous row
+        for col in range(coordinate[1] - 1, coordinate[1] + 2):
+            for part in parts:
+                if part.row == coordinate[0] - 1:
+                    if col in range(part.col_start, part.col_end + 1):
+                        yield part
+        # # same row
+        for col in [coordinate[1] - 1, coordinate[1] + 1]:
+            for part in parts:
+                if part.row == coordinate[0]:
+                    if col in range(part.col_start, part.col_end + 1):
+                        yield part
+        # # next row
+        for col in range(coordinate[1] - 1, coordinate[1] + 2):
+            for part in parts:
+                if part.row == coordinate[0] + 1:
+                    if col in range(part.col_start, part.col_end + 1):
+                        yield part
+
+    return set(is_adjacent())
 
 
 def main():
@@ -130,7 +136,23 @@ def main():
     test_input_asterisks = list(asterisk_locations(TEST_INPUT_DATA))
     print('test input asterisks:')
     print(test_input_asterisks)
-    print(set(adjacent_parts(test_input_asterisks[0], test_input_parts)))
+    print('test input adjacent parts to asterisks:')
+    asterisks_and_adjacent_parts = [
+        (asterisk, list(adjacent_parts(asterisk, test_input_parts)))
+        for asterisk in test_input_asterisks
+    ]
+    print(asterisks_and_adjacent_parts)
+    gears = [
+        item for item in asterisks_and_adjacent_parts if len(item[1]) == 2
+    ]
+    print('test input gears:')
+    print(gears)
+    gear_ratios = [(item[0], item[1][0].number * item[1][1].number)
+                   for item in gears]
+    print('test input gear ratios:')
+    print(gear_ratios)
+    print('test input sum of gear rations:')
+    print(sum([item[1] for item in gear_ratios]))
 
 
 if __name__ == "__main__":
