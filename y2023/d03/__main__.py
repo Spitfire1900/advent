@@ -137,21 +137,34 @@ def main():
     print('test input asterisks:')
     print(test_input_asterisks)
     print('test input adjacent parts to asterisks:')
-    asterisks_and_adjacent_parts = [
+    test_input_asterisks_and_adjacent_parts = [
         (asterisk, list(adjacent_parts(asterisk, test_input_parts)))
         for asterisk in test_input_asterisks
     ]
-    print(asterisks_and_adjacent_parts)
+    print(test_input_asterisks_and_adjacent_parts)
+    test_input_gears = [
+        item for item in test_input_asterisks_and_adjacent_parts
+        if len(item[1]) == 2
+    ]
+    print('test input gears:')
+    print(test_input_gears)
+    test_input_gear_ratios = [(item[0], item[1][0].number * item[1][1].number)
+                              for item in test_input_gears]
+    print('test input gear ratios:')
+    print(test_input_gear_ratios)
+    print('test input sum of gear rations:')
+    print(sum([item[1] for item in test_input_gear_ratios]))
+
+    input_asterisks = list(asterisk_locations(INPUT_DATA))
+    asterisks_and_adjacent_parts = [(asterisk,
+                                     list(adjacent_parts(asterisk, parts)))
+                                    for asterisk in input_asterisks]
     gears = [
         item for item in asterisks_and_adjacent_parts if len(item[1]) == 2
     ]
-    print('test input gears:')
-    print(gears)
     gear_ratios = [(item[0], item[1][0].number * item[1][1].number)
                    for item in gears]
-    print('test input gear ratios:')
-    print(gear_ratios)
-    print('test input sum of gear rations:')
+    print('Part 2 answer:')
     print(sum([item[1] for item in gear_ratios]))
 
 
