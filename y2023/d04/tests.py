@@ -2,7 +2,7 @@ from . import __main__ as main
 
 
 def test_parse_cards():
-    card_generator = main.parse_cards(main.PART_ONE_TEST_INPUT)
+    card_generator = main.parse_cards(main.TEST_INPUT)
     assert card_generator.send(None) == main.Card(
         number=1,
         winning_numbers=[41, 48, 83, 86, 17],
@@ -16,7 +16,7 @@ def test_parse_cards():
 
 
 def test_part_one_card_points():
-    card_generator = main.parse_cards(main.PART_ONE_TEST_INPUT)
+    card_generator = main.parse_cards(main.TEST_INPUT)
     assert card_generator.send(None).get_points() == 8  # 1
     assert card_generator.send(None).get_points() == 2  # 2
     assert card_generator.send(None).get_points() == 2  # 3
@@ -25,6 +25,17 @@ def test_part_one_card_points():
     assert card_generator.send(None).get_points() == 0  # 6
 
 
+def test_part_two_card_point():
+    card_generator = main.parse_cards(main.TEST_INPUT)
+    cards = list(card_generator)
+    assert cards[0].get_part_two_points(cards[1:]) == 13
+
+
 def test_part_one_score():
     assert main.get_part_one_score(
-        main.PART_ONE_TEST_INPUT) == main.PART_ONE_TEST_ANSWER
+        main.TEST_INPUT) == main.PART_ONE_TEST_ANSWER
+
+
+def test_part_two_score():
+    assert main.get_part_two_score(
+        main.TEST_INPUT) == main.PART_TWO_TEST_ANSWER

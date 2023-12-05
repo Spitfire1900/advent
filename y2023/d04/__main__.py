@@ -4,9 +4,9 @@ import re
 import sys
 import textwrap
 from dataclasses import dataclass
-from typing import Any, Generator
+from typing import Any, Generator, List
 
-PART_ONE_TEST_INPUT = textwrap.dedent('''\
+TEST_INPUT = textwrap.dedent('''\
     Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
     Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
     Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
@@ -14,15 +14,18 @@ PART_ONE_TEST_INPUT = textwrap.dedent('''\
     Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
     Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
     ''')
-PART_ONE_TEST_ANSWER = 13
 INPUT = (pathlib.Path(os.path.dirname(__file__)) / 'input.txt').read_text()
+PART_ONE_TEST_ANSWER = 13
+PART_TWO_TEST_ANSWER = 30
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Card():
     number: int
     winning_numbers: list[int]
     your_numbers: list[int]
+    matches: int = 0
+    copies: int = 0
 
     def get_points(self) -> int:
         matches = 0
@@ -38,7 +41,21 @@ class Card():
             else:
                 score *= 2
             i += 1
+        self.matches = matches
         return score
+
+    def get_part_two_points(self, next_cards: List["Card"]):
+        part_two_points = 0
+        part_two_points += self.get_points()
+        i = 0
+        while i < self.matches:
+            try:
+                next_cards[i].copies += 1
+                part_two_points += next_cards[i].get_points()
+            except IndexError:
+                break
+            i += 1
+        return part_two_points
 
 
 def parse_cards(input: str) -> Generator[Card, None, Any]:
@@ -62,6 +79,16 @@ def parse_cards(input: str) -> Generator[Card, None, Any]:
 def get_part_one_score(input: str):
     cards = parse_cards(input)
     score = sum(card.get_points() for card in cards)
+    return score
+
+
+def get_part_two_score(input: str):
+    score = 0
+    cards = list(parse_cards(
+        input))  # TODO: https://stackoverflow.com/a/1012089/2673149
+    for idx, card in enumerate(cards):
+        card.get_points()
+        score += card.get_part_two_points(next_cards=cards[idx + 1:])
     return score
 
 
