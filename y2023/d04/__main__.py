@@ -25,7 +25,7 @@ class Card():
     winning_numbers: list[int]
     your_numbers: list[int]
     matches: int = 0
-    copies: int = 0
+    copies: int = 1
 
     def get_points(self) -> int:
         matches = 0
@@ -44,18 +44,16 @@ class Card():
         self.matches = matches
         return score
 
-    def get_part_two_points(self, next_cards: List["Card"]):
-        part_two_points = 0
-        part_two_points += self.get_points()
-        i = 0
-        while i < self.matches:
-            try:
-                next_cards[i].copies += 1
-                part_two_points += next_cards[i].get_points()
-            except IndexError:
-                break
-            i += 1
-        return part_two_points
+    # def get_part_two_copies(self, next_cards: List["Card"]):
+    #     if self.matches > 0:
+    #         self.copies += 1
+
+    #     i = 0
+    #     while i < self.matches:
+    #         next_cards[i].copies += 1
+    #         i += 1
+
+    #     return self.copies
 
 
 def parse_cards(input: str) -> Generator[Card, None, Any]:
@@ -83,17 +81,28 @@ def get_part_one_score(input: str):
 
 
 def get_part_two_score(input: str):
-    score = 0
+    total_scratchcards = 0
     cards = list(parse_cards(
         input))  # TODO: https://stackoverflow.com/a/1012089/2673149
+    [card.get_points() for card in cards]
     for idx, card in enumerate(cards):
-        card.get_points()
-        score += card.get_part_two_points(next_cards=cards[idx + 1:])
-    return score
+        total_scratchcards += card.copies
+        c = 0
+        while c < card.copies:
+            i = 0
+            while i < card.matches:
+                # try:
+                cards[idx + i + 1].copies += 1
+                # except IndexError:
+                # break
+                i += 1
+            c += 1
+    return total_scratchcards
 
 
 def main():
     print('Part 1: ', get_part_one_score(INPUT))
+    print('Part 2: ', get_part_two_score(INPUT))
 
 
 if __name__ == '__main__':

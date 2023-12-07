@@ -28,7 +28,12 @@ def test_part_one_card_points():
 def test_part_two_card_point():
     card_generator = main.parse_cards(main.TEST_INPUT)
     cards = list(card_generator)
-    assert cards[0].get_part_two_points(cards[1:]) == 13
+    assert cards[0].get_part_two_copies(cards[1:]) == 1  # 1
+    assert cards[1].get_part_two_copies(cards[2:]) == 2  # 2
+    assert cards[2].get_part_two_copies(cards[3:]) == 4  # 3
+    assert cards[3].get_part_two_copies(cards[4:]) == 8  # 4
+    assert cards[4].get_part_two_copies(cards[5:]) == 14  # 5
+    assert cards[5].get_part_two_copies(cards[6:]) == 1  # 6
 
 
 def test_part_one_score():
