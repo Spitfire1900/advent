@@ -93,9 +93,10 @@ def get_part_two_score(input: str):
             while i < card.matches:
                 # try:
                 cards[idx + i + 1].copies += 1
-                # print(
-                #     f'card number: {card.number}, accessing cards index {idx + i + 1}...'
-                # )
+                # if card.number > 194:
+                #     print(
+                #         f'card number: {card.number}, accessing cards index {idx + i + 1}...'
+                #     )
                 # except IndexError:
                 # break
                 i += 1
