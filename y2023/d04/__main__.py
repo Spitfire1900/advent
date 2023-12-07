@@ -91,14 +91,13 @@ def get_part_two_score(input: str):
         while c < card.copies:
             i = 0
             while i < card.matches:
-                # try:
-                cards[idx + i + 1].copies += 1
-                # if card.number > 194:
-                #     print(
-                #         f'card number: {card.number}, accessing cards index {idx + i + 1}...'
-                #     )
-                # except IndexError:
-                # break
+                try:
+                    cards[idx + i + 1].copies += 1
+                except IndexError as e:
+                    print(
+                        f'Got {type(e)} while analyzing card number: {card.number}, accessing cards index {idx + i + 1}...'
+                    )
+                    break
                 i += 1
             c += 1
     return total_scratchcards
